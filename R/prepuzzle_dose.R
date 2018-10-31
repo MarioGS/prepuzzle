@@ -1,4 +1,4 @@
-#' Converting pc SDTM into pk input for the puzzle function
+#' Converting ex SDTM into dose input for the puzzle function
 #'
 #' @authors Mario Gonzalez Sales
 #'
@@ -8,22 +8,19 @@
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
-#' @param only_observations if TRUE only observations will be retained in the dataframe 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
-#'  pk = as.data.frame(puzzle_pk(df = PC, only_observations = T, lower_case = T))
+#'  dose = as.data.frame(prepuzzle_dose(df = EX, lower_case = T))
 
 
-puzzle_pk = function(directory=NULL,
-                     xpt=FALSE,
-                     sas7bdat=FALSE,
-                     csv=FALSE,
-                     df=NULL,
-                     lower_case=F,
-                     only_observations = F){
-  
+prepuzzle_dose = function(directory=NULL,
+                          xpt=FALSE,
+                          sas7bdat=FALSE,
+                          csv=FALSE,
+                          df=df,
+                          lower_case = F){
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
       0) {
@@ -34,8 +31,9 @@ puzzle_pk = function(directory=NULL,
   suppressPackageStartupMessages(library("Hmisc"))
   suppressPackageStartupMessages(library("sas7bdat"))
   suppressPackageStartupMessages(library("readr"))
-
-  if(!is.null(directory) & !is.null(df)){
+  
+  
+  if(!is.null(directory) & is.null(df)){
     stop("You do not need to define the arguments directory and df at the same time! Please use one of them and set the other to NULL")
   }
   
@@ -59,22 +57,20 @@ puzzle_pk = function(directory=NULL,
   if(lower_case){
     names(df) = tolower(names(df))
   }
-  df$ID = df$usubjid
-  df$DV = df$pcstresn
-  df$DV = ifelse(is.na(df$DV),0,df$DV)
-  df$LLOQ = df$pclloq
-  df$DATETIME = df$pcdtc
-  df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
   
-  #Remove non-observations  
-  if(only_observations){
-    df = dplyr::filter(df,pcstat=="")
+  df$ID = df$usubjid
+  df$STUDY = df$studyid
+  df$VISIT = df$visitnum
+  df$PERIOD = df$visit
+  df$DATETIME = df$exstdtc
+  if("exdostot" %in% names(df)){
+    df$AMT = df$exdostot
+  }
+  if("exdose" %in% names(df)){
+    df$AMT = df$exdose
   }
   
-  #df = select(df,ID,STUDY,DATETIME,NOMINALTAD,PERIOD,DV,VISIT,BLQ)
-  df = dplyr::select(df,ID,DATETIME,DV,BLQ)
-  df = dplyr::mutate_all(df,as.character)
-  
+  df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT)
+  df = dplyr::mutate_all(df, as.character)
   return(df)
 }
-

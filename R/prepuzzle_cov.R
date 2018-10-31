@@ -8,12 +8,12 @@
 #' @export
 #' @examples
 #'
-#'  cov = puzzle_cov(dm=dm,
+#'  cov = prepuzzle_cov(dm=dm,
 #'                   vs=vs)
 
-puzzle_cov = function(dm=NULL,
-                      vs=NULL,
-                      lower_case = F){
+prepuzzle_cov = function(dm=NULL,
+                         vs=NULL,
+                         lower_case = F){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
@@ -30,21 +30,21 @@ puzzle_cov = function(dm=NULL,
   if(is.null(dm) & is.null(vs)){
     stop("Please define at least the dm or the vs arguments")
   }
-
+  
   if(!is.null(dm) & !is.null(vs)){
     if(length(dm)!=length(vs)){
-    stop("dm and vs has to have the same length. If you have used puzzle_dm and puzzle_vs, please make sure time_dependent_cov argument has been consistently used")
-      }
+      stop("dm and vs has to have the same length. If you have used prepuzzle_dm and prepuzzle_vs, please make sure time_dependent_cov argument has been consistently used")
+    }
   }
   
-    
+  
   if(!is.null(dm)){
     dm = dm
     if(lower_case){
       names(dm) = tolower(names(dm))
     }
   }
-
+  
   if(!is.null(vs)){
     vs = vs
     if(lower_case){

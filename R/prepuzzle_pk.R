@@ -1,4 +1,4 @@
-#' Converting dm SDTM into covariates input for the puzzle function
+#' Converting pc SDTM into pk input for the puzzle function
 #'
 #' @authors Mario Gonzalez Sales
 #'
@@ -8,23 +8,21 @@
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
-#' @param time_dependent_cov Do you have time dependent covariates to be included in the dataset? 
-#' @param covariates vector with the name of the covariates to be included in the dataset 
+#' @param only_observations if TRUE only observations will be retained in the dataframe 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
-#'  dm = as.data.frame(puzzle_dm(df = df_dm1, covariates = c("age","sex","race")))
+#'  pk = as.data.frame(prepuzzle_pk(df = PC, only_observations = T, lower_case = T))
 
 
-puzzle_dm = function(directory=NULL,
-                     xpt=FALSE,
-                     sas7bdat=FALSE,
-                     csv=FALSE,
-                     df,
-                     lower_case = F,
-                     time_dependent_cov=F,
-                     covariates = NULL){
+prepuzzle_pk = function(directory=NULL,
+                        xpt=FALSE,
+                        sas7bdat=FALSE,
+                        csv=FALSE,
+                        df=NULL,
+                        lower_case=F,
+                        only_observations = F){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
@@ -37,8 +35,7 @@ puzzle_dm = function(directory=NULL,
   suppressPackageStartupMessages(library("sas7bdat"))
   suppressPackageStartupMessages(library("readr"))
   
-  
-  if(!is.null(directory) & is.null(df)){
+  if(!is.null(directory) & !is.null(df)){
     stop("You do not need to define the arguments directory and df at the same time! Please use one of them and set the other to NULL")
   }
   
@@ -62,33 +59,22 @@ puzzle_dm = function(directory=NULL,
   if(lower_case){
     names(df) = tolower(names(df))
   }
-  
   df$ID = df$usubjid
-  df$DATETIME = df$rfstdtc
+  df$DV = df$pcstresn
+  df$DV = ifelse(is.na(df$DV),0,df$DV)
+  df$LLOQ = df$pclloq
+  df$DATETIME = df$pcdtc
+  df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
   
-  df_id = dplyr::select(df,ID,DATETIME)
-  
-  if(time_dependent_cov==FALSE){
-    df_id = dplyr::select(df,ID)
+  #Remove non-observations  
+  if(only_observations){
+    df = dplyr::filter(df,pcstat=="")
   }
   
-  #Select covariates
-  if(!is.null(covariates)){
-    df_covariates = dplyr::select(df,covariates)
-    df = cbind(df_id,df_covariates)
-  }
+  #df = select(df,ID,STUDY,DATETIME,NOMINALTAD,PERIOD,DV,VISIT,BLQ)
+  df = dplyr::select(df,ID,DATETIME,DV,BLQ)
+  df = dplyr::mutate_all(df,as.character)
   
-  #Proper format for puzzle()
-  if(time_dependent_cov){
-  df = reshape2::melt(df,id.vars=c("ID","DATETIME"))
-  names(df) = c("ID","DATETIME","VARIABLE","VALUE")
-  df$VARIABLE = toupper(df$VARIABLE)
-  }  
-  
-  if(time_dependent_cov==FALSE){
-    df = reshape2::melt(df,id.vars=c("ID"))
-    names(df) = c("ID","VARIABLE","VALUE")
-    df$VARIABLE = toupper(df$VARIABLE)
-  }
   return(df)
 }
+

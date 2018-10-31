@@ -13,15 +13,15 @@
 #' @export
 #' @examples
 #'
-#'  vs = as.data.frame(puzzle_vs(df = df_vs1,time_dependent_cov = F))
+#'  vs = as.data.frame(prepuzzle_vs(df = df_vs1,time_dependent_cov = F))
 
-puzzle_vs = function(directory=NULL,
-                     xpt=FALSE,
-                     sas7bdat=FALSE,
-                     csv=FALSE,
-                     df,
-                     lower_case = F,
-                     time_dependent_cov=F){
+prepuzzle_vs = function(directory=NULL,
+                        xpt=FALSE,
+                        sas7bdat=FALSE,
+                        csv=FALSE,
+                        df,
+                        lower_case = F,
+                        time_dependent_cov=F){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >

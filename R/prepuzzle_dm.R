@@ -1,4 +1,4 @@
-#' Converting ex SDTM into dose input for the puzzle function
+#' Converting dm SDTM into covariates input for the puzzle function
 #'
 #' @authors Mario Gonzalez Sales
 #'
@@ -8,19 +8,24 @@
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
+#' @param time_dependent_cov Do you have time dependent covariates to be included in the dataset? 
+#' @param covariates vector with the name of the covariates to be included in the dataset 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
-#'  dose = as.data.frame(puzzle_dose(df = EX, lower_case = T))
+#'  dm = as.data.frame(prepuzzle_dm(df = df_dm1, covariates = c("age","sex","race")))
 
 
-puzzle_dose = function(directory=NULL,
-                       xpt=FALSE,
-                       sas7bdat=FALSE,
-                       csv=FALSE,
-                       df=df,
-                       lower_case = F){
+prepuzzle_dm = function(directory=NULL,
+                        xpt=FALSE,
+                        sas7bdat=FALSE,
+                        csv=FALSE,
+                        df,
+                        lower_case = F,
+                        time_dependent_cov=F,
+                        covariates = NULL){
+  
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
       0) {
@@ -59,18 +64,31 @@ puzzle_dose = function(directory=NULL,
   }
   
   df$ID = df$usubjid
-  df$STUDY = df$studyid
-  df$VISIT = df$visitnum
-  df$PERIOD = df$visit
-  df$DATETIME = df$exstdtc
-  if("exdostot" %in% names(df)){
-    df$AMT = df$exdostot
-  }
-  if("exdose" %in% names(df)){
-    df$AMT = df$exdose
+  df$DATETIME = df$rfstdtc
+  
+  df_id = dplyr::select(df,ID,DATETIME)
+  
+  if(time_dependent_cov==FALSE){
+    df_id = dplyr::select(df,ID)
   }
   
-  df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT)
-  df = dplyr::mutate_all(df, as.character)
+  #Select covariates
+  if(!is.null(covariates)){
+    df_covariates = dplyr::select(df,covariates)
+    df = cbind(df_id,df_covariates)
+  }
+  
+  #Proper format for puzzle()
+  if(time_dependent_cov){
+    df = reshape2::melt(df,id.vars=c("ID","DATETIME"))
+    names(df) = c("ID","DATETIME","VARIABLE","VALUE")
+    df$VARIABLE = toupper(df$VARIABLE)
+  }  
+  
+  if(time_dependent_cov==FALSE){
+    df = reshape2::melt(df,id.vars=c("ID"))
+    names(df) = c("ID","VARIABLE","VALUE")
+    df$VARIABLE = toupper(df$VARIABLE)
+  }
   return(df)
 }
