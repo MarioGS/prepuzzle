@@ -1,0 +1,23 @@
+Package: prepuzzle
+Type: Package
+Title: Additional functions for the puzzle package.
+Version: 0.1.0
+Authors@R: c(
+    person(c("Mario"), "Gonzalez Sales", role = c("aut", "cre"), email = "mario.gonzalezsales@syneoshealth.com")
+    )
+Maintainer: Mario Gonzalez Sales <mario.gonzalezsales@syneoshealth.com>
+Description: Additional functions to make the puzzle package fully compatible with SDTM datasets.
+License: MIT + file LICENSE
+URL: https://github.com/MarioGS/prepuzzle
+LazyData: TRUE
+Imports:
+    tidyverse,
+    puzzle
+Suggests:
+    rmarkdown,
+    knitr,
+    devtools
+VignetteBuilder: knitr
+RoxygenNote: 6.1.0
+Depends:
+    R (>= 3.0)
