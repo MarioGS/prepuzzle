@@ -8,7 +8,7 @@
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
-#' @param time_dependent_cov Do you have time dependent covariates to be included in the dataset? 
+#' @param include_time Would yu like to include time in the dataset? 
 #' @param covariates vector with the name of the covariates to be included in the dataset 
 #' @return a dataframe
 #' @export
@@ -23,7 +23,7 @@ prepuzzle_dm = function(directory=NULL,
                         csv=FALSE,
                         df,
                         lower_case = F,
-                        time_dependent_cov=F,
+                        include_time=F,
                         covariates = NULL){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
@@ -68,7 +68,7 @@ prepuzzle_dm = function(directory=NULL,
   
   df_id = dplyr::select(df,ID,DATETIME)
   
-  if(time_dependent_cov==FALSE){
+  if(include_time==FALSE){
     df_id = dplyr::select(df,ID)
   }
   
@@ -79,13 +79,13 @@ prepuzzle_dm = function(directory=NULL,
   }
   
   #Proper format for puzzle()
-  if(time_dependent_cov){
+  if(include_time){
     df = reshape2::melt(df,id.vars=c("ID","DATETIME"))
     names(df) = c("ID","DATETIME","VARIABLE","VALUE")
     df$VARIABLE = toupper(df$VARIABLE)
   }  
   
-  if(time_dependent_cov==FALSE){
+  if(include_time==FALSE){
     df = reshape2::melt(df,id.vars=c("ID"))
     names(df) = c("ID","VARIABLE","VALUE")
     df$VARIABLE = toupper(df$VARIABLE)

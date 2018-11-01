@@ -63,14 +63,45 @@ prepuzzle_dose = function(directory=NULL,
   df$VISIT = df$visitnum
   df$PERIOD = df$visit
   df$DATETIME = df$exstdtc
-  if("exdostot" %in% names(df)){
-    df$AMT = df$exdostot
-  }
+  df$TRT = df$extrt
+  
+  '%!in%' <- function(x,y)!('%in%'(x,y))
+  #'%ni%' <- Negate('%in%') alternative
+  
   if("exdose" %in% names(df)){
     df$AMT = df$exdose
   }
   
-  df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT)
-  df = dplyr::mutate_all(df, as.character)
+  if("exdostot" %in% names(df) & "exdose" %!in% names(df)){
+    df$AMT = df$exdostot
+  }
+  
+  if("exroute" %in% names(df)){
+    df$ROUTE = df$exroute
+  }
+  
+  if("exfast" %in% names(df)){
+    df$FAST = df$exfast
+  }
+  
+  if("exfast" %!in% names(df) & "exroute" %!in% names(df)){
+  df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT,TRT)
+  }
+  
+  if("exfast" %in% names(df) & "exroute" %!in% names(df)){
+    df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT,TRT,FAST)
+  }
+  
+  if("exfast" %!in% names(df) & "exroute" %in% names(df)){
+    df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT,TRT,ROUTE)
+  }
+
+  if("exfast" %in% names(df) & "exroute" %in% names(df)){
+    df = dplyr::select(df,ID,STUDY,DATETIME,PERIOD,AMT,VISIT,TRT,FAST,ROUTE)
+  }
+  
+    df = dplyr::mutate_all(df, as.character)
   return(df)
 }
+
+#Does not take in to account EXENDTC yet

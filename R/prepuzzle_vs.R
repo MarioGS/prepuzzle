@@ -8,12 +8,12 @@
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
-#' @param time_dependent_cov Do you have time dependent covariates to be included in the dataset? 
+#' @param include_time Would yu like to include time in the dataset? 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
-#'  vs = as.data.frame(prepuzzle_vs(df = df_vs1,time_dependent_cov = F))
+#'  vs = as.data.frame(prepuzzle_vs(df = df_vs1,include_time = F))
 
 prepuzzle_vs = function(directory=NULL,
                         xpt=FALSE,
@@ -21,7 +21,7 @@ prepuzzle_vs = function(directory=NULL,
                         csv=FALSE,
                         df,
                         lower_case = F,
-                        time_dependent_cov=F){
+                        include_time=F){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
@@ -67,7 +67,7 @@ prepuzzle_vs = function(directory=NULL,
   
   df_id = dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
   
-  if(time_dependent_cov==FALSE){
+  if(include_time==FALSE){
     df_id = dplyr::select(df,ID,VARIABLE,VALUE)
   }
   

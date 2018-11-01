@@ -1,4 +1,4 @@
-#' Converting cm SDTM into covariates input for the puzzle function
+#' Converting ae SDTM into covariates input for the puzzle function
 #'
 #' @authors Mario Gonzalez Sales
 #'
@@ -9,21 +9,19 @@
 #' @param df R object type dataframe
 #' @param lower_case if TRUE convert the names of df from upper to lower case
 #' @param include_time Would yu like to include time in the dataset? 
-#' @param abbreviated Does your CM file have an abbreviated format? 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
-#'  cm = as.data.frame(prepuzzle_cm(df = df_cm1))
+#'  ae = as.data.frame(prepuzzle_su(df = df_ae1))
 
-prepuzzle_cm = function(directory=NULL,
+prepuzzle_ae = function(directory=NULL,
                         xpt=FALSE,
                         sas7bdat=FALSE,
                         csv=FALSE,
                         df,
-                        lower_case=FALSE,
-                        include_time=FALSE,
-                        abbreviated=FALSE){
+                        lower_case = F,
+                        include_time=F){
   
   packages = c("magrittr","Hmisc","sas7bdat","readr")
   if (length(setdiff(packages, rownames(installed.packages()))) >
@@ -62,36 +60,33 @@ prepuzzle_cm = function(directory=NULL,
     names(df) = tolower(names(df))
   }
   
-  if(abbreviated==FALSE & include_time){
-    df$ID = df$usubjid
-    df$DATETIME = df$cmstdtc 
-    df$VARIABLE = df$cmtrt
-    df$VALUE = df$cmdose
-    df_id = dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
-  }
-
-  if(abbreviated==FALSE & include_time==FALSE){
-    df$ID = df$usubjid
-    df$VARIABLE = df$cmtrt
-    df$VALUE = df$cmdose
-    df_id = dplyr::select(df,ID,VARIABLE,VALUE)
+  df$ID = df$usubjid
+  df$DATETIME = df$aestdtc
+  df$VARIABLE = df$aedecod
+  
+  '%!in%' <- function(x,y)!('%in%'(x,y))
+  #'%ni%' <- Negate('%in%') alternative
+  
+  if("aesev" %in% names(df)){
+    df$VALUE = df$aesev
   }
   
-  if(abbreviated & include_time){
-    stop("Abbreviated cannot include time. Please set abbreviated ot include_time to FALSE")
+  if("aetoxgr" %in% names(df) & "aesev" %!in% names(df)){
+    df$VALUE = df$aetoxgr
   }
   
-  if(abbreviated & include_time==FALSE){
-    df$ID = df$usubjid
-    df$VARIABLE = df$cmtrt
-    df$VALUE = df$cmoccur
-    df_id = dplyr::select(df,ID,VARIABLE,VALUE)
+  if("aetoxgr" %!in% names(df) & "aesev" %!in% names(df)){
+    stop("AESEV or AETOXGR must be in defined in AE dataset")
   }
   
-  df = df_id
+  #Proper format for puzzle()
+  if(include_time){
+    dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
+  }  
+  
+  if(include_time==FALSE){
+    dplyr::select(df,ID,VARIABLE,VALUE)
+  }
   return(df)
 }
 
-#abbreviated==T implies there is not time information. Sponsors often are interested in whether subjects are exposed to specific concomitant medications, and collect this information using a checklist. 
-#The important information is if the subject takes the co-medication or not.
-#This version only takes into account if the co-medication has been administrated or not. It is not smart enough to compute the times of administration
