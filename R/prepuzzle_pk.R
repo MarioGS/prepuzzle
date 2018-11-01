@@ -61,7 +61,7 @@ prepuzzle_pk = function(directory=NULL,
   }
   df$ID = df$usubjid
   df$ENTITY = df$pctest
-  df$DV = df$pcorresp
+  df$DV = df$pcorres
   df$DV = ifelse(is.na(df$DV),0,df$DV)
   df$LLOQ = df$pclloq
   df$DATETIME = df$pcdtc
