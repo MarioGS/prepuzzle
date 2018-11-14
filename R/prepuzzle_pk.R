@@ -76,7 +76,8 @@ prepuzzle_pk = function(directory=NULL,
   df$LLOQ = df$pclloq
   df$DATETIME = df$pcdtc
   df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
-  
+  df$BLQ = ifelse(is.null(df$DV),1,df$BLQ)
+
   #Remove non-observations  
   if(only_observations){
     df = dplyr::filter(df,pcstat=="")
