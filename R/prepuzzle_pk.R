@@ -72,6 +72,7 @@ prepuzzle_pk = function(directory=NULL,
     stop("Have you forgotten to set lower_case = T?")
   }
   
+  if(names(df) %in% required){
     df$ID = df$usubjid
     df$ENTITY = df$pctest
     df$DV = df$pcorres
@@ -79,7 +80,7 @@ prepuzzle_pk = function(directory=NULL,
     df$LLOQ = df$pclloq
     df$DATETIME = df$pcdtc
     df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
- 
+  } 
   #Remove non-observations  
   if(only_observations){
     df = dplyr::filter(df,pcstat=="")
