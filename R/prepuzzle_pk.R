@@ -62,7 +62,7 @@ prepuzzle_pk = function(directory=NULL,
   
   '%!in%' <- function(x,y)!('%in%'(x,y))
   required = c("usubjid","pctest","pcorres","pclloq","pcdtc")
-  if(names(df) %!in% required){
+  if(required %!in% names(df) ){
     stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq, pcdtc")
   }
   if(names(df) %in% required & lower_case==F){
