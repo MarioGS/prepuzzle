@@ -73,7 +73,7 @@ prepuzzle_pk = function(directory=NULL,
     stop("Have you forgotten to set lower_case = T?")
   }
   
-  if(required %!in% names(df)){
+  if(required %in% names(df)){
     df$ID = df$usubjid
     df$ENTITY = df$pctest
     df$DV = df$pcorres
