@@ -73,15 +73,14 @@ prepuzzle_pk = function(directory=NULL,
     stop("Have you forgotten to set lower_case = T?")
   }
   
-  if(required %in% names(df)){
-    df$ID = df$usubjid
-    df$ENTITY = df$pctest
-    df$DV = df$pcorres
-    df$DV = ifelse(is.na(df$DV),0,df$DV)
-    df$LLOQ = df$pclloq
-    df$DATETIME = df$pcdtc
-    df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
-  } 
+  df$ID = df$usubjid
+  df$ENTITY = df$pctest
+  df$DV = df$pcorres
+  df$DV = ifelse(is.na(df$DV),0,df$DV)
+  df$LLOQ = df$pclloq
+  df$DATETIME = df$pcdtc
+  df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
+  
   #Remove non-observations  
   if(only_observations){
     df = dplyr::filter(df,pcstat=="")
