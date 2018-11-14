@@ -39,6 +39,8 @@ prepuzzle_pk = function(directory=NULL,
     stop("You do not need to define the arguments directory and df at the same time! Please use one of them and set the other to NULL")
   }
   
+  options(warn = -1)
+  
   if(!is.null(directory) & xpt & is.null(df)){
     df = Hmisc::sasxport.get(directory)
   }
@@ -76,7 +78,6 @@ prepuzzle_pk = function(directory=NULL,
   df$LLOQ = df$pclloq
   df$DATETIME = df$pcdtc
   df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
-  df$BLQ = ifelse(is.null(df$DV),1,df$BLQ)
 
   #Remove non-observations  
   if(only_observations){
