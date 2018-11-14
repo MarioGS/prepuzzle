@@ -67,7 +67,7 @@ prepuzzle_pk = function(directory=NULL,
   if(required %!in% names(df) ){
     stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq, pcdtc")
   }
-  if(names(df) %in% required & lower_case==F){
+  if(names(df) %!in% required & lower_case==F){
     stop("Have you forgotten to set lower_case = T?")
   }
   
