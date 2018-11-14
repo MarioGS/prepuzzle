@@ -64,15 +64,14 @@ prepuzzle_pk = function(directory=NULL,
   
   '%!in%' <- function(x,y)!('%in%'(x,y))
   required = c("usubjid","pctest","pcorres","pclloq","pcdtc")
-  if(required %!in% names(df) ){
+  if(required %!in% names(df) & lower_case==T){
     stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq, pcdtc")
   }
+  
   if(names(df) %!in% required & lower_case==F){
     stop("Have you forgotten to set lower_case = T?")
   }
   
-  
-  if(names(df) %in% required){
     df$ID = df$usubjid
     df$ENTITY = df$pctest
     df$DV = df$pcorres
@@ -80,7 +79,7 @@ prepuzzle_pk = function(directory=NULL,
     df$LLOQ = df$pclloq
     df$DATETIME = df$pcdtc
     df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
-  }
+ 
   #Remove non-observations  
   if(only_observations){
     df = dplyr::filter(df,pcstat=="")
