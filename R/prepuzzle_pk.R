@@ -84,8 +84,8 @@ prepuzzle_pk = function(directory=NULL,
       return(x)
     })
     df = bind_rows(df)
-    #df = arrange(df,USUBJID,PCDTC)
-    df = arrange(df,usubjid,pctest)
+    df = arrange(df,usubjid,pcdtc)
+#    df = arrange(df,usubjid,pctest)
     df$DV = df$pcorres
     df$DV = ifelse(is.na(df$DV),0,df$DV)
     df$LLOQ = df$pclloq
