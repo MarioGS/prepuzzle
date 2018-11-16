@@ -73,7 +73,7 @@ prepuzzle_pk = function(directory=NULL,
   df$ID = df$usubjid
   df$ENTITY = df$pctest
   #Fix BLQ depending on the number of entities
-  n_entities = unique(df$ENTITY)
+  n_entities = length(unique(df$ENTITY))
   if(n_entities>1){
     blq = split(df, df$ENTITY)  
     df <- lapply(blq, function(x){
@@ -85,7 +85,7 @@ prepuzzle_pk = function(directory=NULL,
     })
     df = bind_rows(df)
     #df = arrange(df,USUBJID,PCDTC)
-    df = arrange(df,USUBJID,PCTEST)
+    df = arrange(df,usubjid,pctest)
     df$DV = df$pcorres
     df$DV = ifelse(is.na(df$DV),0,df$DV)
     df$LLOQ = df$pclloq
