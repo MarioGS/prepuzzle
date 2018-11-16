@@ -58,28 +58,57 @@ prepuzzle_pk = function(directory=NULL,
   }
   
   df = df
-  '%!in%' <- function(x,y)!('%in%'(x,y))
-  required = c("usubjid","pctest","pcorres","pclloq","pcdtc")
-  if(required %!in% names(df) & lower_case==F){
+  "%!in%" <- function(x, y) !(x %in% y)
+  required = c("usubjid", "pctest", "pcorres", "pclloq", "pcdtc")
+  if (required %!in% names(df) & lower_case == F) {
     stop("Have you forgotten to set lower_case = T?")
   }
-  
-  if(lower_case){
+  if (lower_case) {
     names(df) = tolower(names(df))
   }
-  
-  if(required %!in% names(df)){
+  if (required %!in% names(df)) {
     stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq, pcdtc")
   }
   
+  dat = prepuzzle::df_pc4
+  unique(dat$PCTEST)
+  unique(dat$PCLLOQ)
+  
+  head(blq[[4]])
+  
+  
   df$ID = df$usubjid
   df$ENTITY = df$pctest
-  df$DV = df$pcorres
-  df$DV = ifelse(is.na(df$DV),0,df$DV)
-  df$LLOQ = df$pclloq
-  df$DATETIME = df$pcdtc
-  df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
   
+  #Fix BLQ depending on the number of entities
+  n_entities = unique(df$ENTITY)
+  if(n_entities>1){
+blq = split(df, df$ENTITY)  
+df <- lapply(blq, function(x){
+  x$pcorres = as.numeric(x$pcorres)
+  x$pclloq = as.numeric(x$pclloq)
+  x$pcorres = ifelse(is.na(x$pcorres),0,x$pcorres)
+  x$BLQ <- ifelse(x$pcorres<x$pclloq,1,0)
+  return(x)
+})
+df = bind_rows(df)
+#df = arrange(df,USUBJID,PCDTC)
+df = arrange(df,USUBJID,PCTEST)
+df$DV = df$pcorres
+df$DV = ifelse(is.na(df$DV),0,df$DV)
+df$LLOQ = df$pclloq
+df$DATETIME = df$pcdtc
+df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
+  }
+  
+  if(n_entities==1){
+    df$DV = df$pcorres
+    df$DV = ifelse(is.na(df$DV),0,df$DV)
+    df$LLOQ = df$pclloq
+    df$DATETIME = df$pcdtc
+    df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
+  }
+
   #Remove non-observations  
   if(only_observations){
     df = dplyr::filter(df,pcstat=="")
@@ -91,4 +120,5 @@ prepuzzle_pk = function(directory=NULL,
   
   return(df)
 }
+
 
