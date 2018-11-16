@@ -107,7 +107,7 @@ prepuzzle_pk = function(directory=NULL,
   }
   
   #df = select(df,ID,STUDY,DATETIME,NOMINALTAD,PERIOD,DV,VISIT,BLQ)
-  df = dplyr::select(df,ID,DATETIME,DV,BLQ)
+  df = dplyr::select(df,ID,DATETIME,DV,BLQ,ENTITY)
   df = dplyr::mutate_all(df,as.character)
   
   return(df)
