@@ -102,9 +102,16 @@ prepuzzle_pk = function(directory=NULL,
     df = dplyr::filter(df,pcstat=="")
   }
   
-  #df = select(df,ID,STUDY,DATETIME,NOMINALTAD,PERIOD,DV,VISIT,BLQ)
+  if(n_entities==1){
   df = dplyr::select(df,ID,DATETIME,DV,BLQ,ENTITY)
   df = dplyr::mutate_all(df,as.character)
+  }
+  
+  if(n_entities>1){
+    df = lapply(df, function(x) x %>% 
+                  dplyr::select(ID,DATETIME,DV,BLQ,ENTITY) %>%
+                  dplyr::mutate_all(as.character)) 
+  }
   
   return(df)
 }
