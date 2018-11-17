@@ -80,17 +80,13 @@ prepuzzle_pk = function(directory=NULL,
       x$pcorres = as.numeric(x$pcorres)
       x$pclloq = as.numeric(x$pclloq)
       x$pcorres = ifelse(is.na(x$pcorres),0,x$pcorres)
+      x$DV = x$pcorres
+      x$DV = ifelse(is.na(x$DV),0,x$DV)
+      x$LLOQ = x$pclloq
+      x$DATETIME = x$pcdtc
       x$BLQ <- ifelse(x$pcorres<x$pclloq,1,0)
       return(x)
     })
-    df = bind_rows(df)
-    df = arrange(df,usubjid,pcdtc)
-#    df = arrange(df,usubjid,pctest)
-    df$DV = df$pcorres
-    df$DV = ifelse(is.na(df$DV),0,df$DV)
-    df$LLOQ = df$pclloq
-    df$DATETIME = df$pcdtc
-    df$BLQ = ifelse(df$DV<df$LLOQ,1,0)
   }
   
   if(n_entities==1){
