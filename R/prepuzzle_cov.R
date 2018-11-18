@@ -58,11 +58,11 @@ prepuzzle_cov = function(ae=NULL,
   
   df = as.data.frame(data.table::rbindlist(cov))
   
-  if(ncol(df==3)){
+  if(ncol(df)==3){
     df = dplyr::arrange(df,ID)
   }
   
-  if(ncol(df==4)){
+  if(ncol(df)==4){
     df = dplyr::arrange(df,ID,DATETIME)
   }
   
