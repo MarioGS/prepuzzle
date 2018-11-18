@@ -1,0 +1,17 @@
+vs: vital signs
+tr: tumor results
+ss: subject status (survival)
+pk: pharmacokinetics
+ms: microbiology specimen
+mb: microbiology susceptibility
+lb: laboratory test results
+is: inmunogenicity specimen assessment
+eg: electrocardiogram
+dv: protocol deviations
+ae: adverse events
+su: substance use
+cm: concomitant
+dm: demographics
+cov: covariates
+dose: exposure
+ 

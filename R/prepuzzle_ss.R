@@ -1,4 +1,4 @@
-#' Converting vs SDTM into covariates input for the puzzle function
+#' Converting ss SDTM into covariates input for the puzzle function
 #'
 #' @authors Mario Gonzalez Sales
 #'
@@ -13,9 +13,9 @@
 #' @export
 #' @examples
 #'
-#'  vs = as.data.frame(prepuzzle_vs(df = df_vs1,include_time = F))
+#'  ss = as.data.frame(prepuzzle_ss(df = df_ss1))
 
-prepuzzle_vs = function(directory=NULL,
+prepuzzle_su = function(directory=NULL,
                         xpt=FALSE,
                         sas7bdat=FALSE,
                         csv=FALSE,
@@ -61,16 +61,18 @@ prepuzzle_vs = function(directory=NULL,
   }
   
   df$ID = df$usubjid
-  df$DATETIME = df$vsdtc
-  df$VARIABLE = df$vstest
-  df$VALUE = df$vsorres
-  
-  df_id = dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
+  df$DATETIME = df$ssdtc
+  df$VARIABLE = df$sstest
+  df$VALUE = df$ssorres
+
+  #Proper format for puzzle()
+  if(include_time){
+    dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
+  }  
   
   if(include_time==FALSE){
-    df_id = dplyr::select(df,ID,VARIABLE,VALUE)
+    dplyr::select(df,ID,VARIABLE,VALUE)
   }
-  
-  df = df_id
   return(df)
 }
+
