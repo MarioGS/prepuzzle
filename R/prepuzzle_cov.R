@@ -58,7 +58,7 @@ prepuzzle_cov = function(ae=NULL,
     stop("All files have to have the same length. If you have used prepuzzle functions, please make sure include_time argument has been consistently used")
   }
   
-  if(check==FALSE){
+  if(check){
     df = as.data.frame(data.table::rbindlist(cov))
   }
   
