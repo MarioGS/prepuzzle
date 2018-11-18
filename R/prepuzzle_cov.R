@@ -50,7 +50,7 @@ prepuzzle_cov = function(ae=NULL,
              tr=tr,
              vs=vs)
   
-  if(all(lengths(cov) != length(cov[[1]]))){
+  if(all(lengths(cov) == length(cov[[1]]))==FALSE){
     stop("All files have to have the same length. If you have used prepuzzle functions, please make sure include_time argument has been consistently used")
   }
   
