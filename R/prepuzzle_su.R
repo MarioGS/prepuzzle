@@ -56,14 +56,22 @@ prepuzzle_su = function(directory=NULL,
   }
   
   df = df
-  if(lower_case){
+  "%!in%" <- function(x, y) !(x %in% y)
+  required = c("usubjid", "sustdtc", "sutrt", "sudose")
+  if (required %!in% names(df) & lower_case == F) {
+    stop("Have you forgotten to set lower_case = T?")
+  }
+  if (lower_case) {
     names(df) = tolower(names(df))
+  }
+  if (required %!in% names(df)) {
+    stop("You need to provide at least the following items: usubjid, sustdtc, sutrt and sudose")
   }
   
   df$ID = df$usubjid
-  df$DATETIME = su$sustdtc
-  df$VARIABLE = su$trt
-  df$VALUE = su$dose
+  df$DATETIME = df$sustdtc
+  df$VARIABLE = df$sutrt
+  df$VALUE = df$sudose
 
   #Proper format for puzzle()
   if(include_time){
