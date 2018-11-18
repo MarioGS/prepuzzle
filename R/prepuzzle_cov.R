@@ -52,13 +52,11 @@ prepuzzle_cov = function(ae=NULL,
   
   cov = purrr::compact(cov)
   
-  if(all(ncol(cov) == ncol(cov[[1]]))==FALSE){
+  if(all(ncol(cov) == ncol(cov[[1]]))==TRUE){
     stop("All files have to have the same length. If you have used prepuzzle functions, please make sure include_time argument has been consistently used")
   }
   
-  if(all(ncol(cov) == ncol(cov[[1]]))==TRUE){
-    df = as.data.frame(data.table::rbindlist(cov))
-  }
+  df = as.data.frame(data.table::rbindlist(cov))
   
   if(ncol(df)==3){
     df = dplyr::arrange(df,ID)
