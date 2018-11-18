@@ -58,9 +58,17 @@ prepuzzle_cm = function(directory=NULL,
   }
   
   df = df
-  if(lower_case){
+  "%!in%" <- function(x, y) !(x %in% y)
+  required = c("usubjid", "cmtrt", "cmdose")
+  if (required %!in% names(df) & lower_case == F) {
+    stop("Have you forgotten to set lower_case = T?")
+  }
+  if (lower_case) {
     names(df) = tolower(names(df))
   }
+  if (required %!in% names(df)) {
+    stop("You need to provide at least the following items: usubjid, cmtrt and cmdose")
+  } 
   
   if(abbreviated==FALSE & include_time){
     df$ID = df$usubjid
@@ -69,7 +77,7 @@ prepuzzle_cm = function(directory=NULL,
     df$VALUE = df$cmdose
     df_id = dplyr::select(df,ID,DATETIME,VARIABLE,VALUE)
   }
-
+  
   if(abbreviated==FALSE & include_time==FALSE){
     df$ID = df$usubjid
     df$VARIABLE = df$cmtrt
