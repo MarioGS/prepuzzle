@@ -34,6 +34,7 @@ prepuzzle_is = function(directory=NULL,
   suppressPackageStartupMessages(library("sas7bdat"))
   suppressPackageStartupMessages(library("readr"))
   
+  options(warn = -1)
   
   if(!is.null(directory) & is.null(df)){
     stop("You do not need to define the arguments directory and df at the same time! Please use one of them and set the other to NULL")
