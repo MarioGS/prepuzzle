@@ -7,14 +7,13 @@
 #' @param sas7bdat Has your file a .sas7bdat extension?
 #' @param csv Has your file a .csv extension?
 #' @param df R object type dataframe
-#' @param lower_case if TRUE convert the names of df from upper to lower case
+#' @param lower_case if TRUE convert the names of df from upper to lower case. Use when the label of your items in the SDTM file are in upper case.
 #' @param only_observations if TRUE only observations will be retained in the dataframe 
 #' @return a dataframe
 #' @export
 #' @examples
 #'
 #'  pk = as.data.frame(prepuzzle_pk(df = PC, only_observations = T, lower_case = T))
-
 
 prepuzzle_pk = function(directory=NULL,
                         xpt=FALSE,
@@ -67,7 +66,7 @@ prepuzzle_pk = function(directory=NULL,
     names(df) = tolower(names(df))
   }
   if (required %!in% names(df)) {
-    stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq, pcdtc")
+    stop("You need to provide at least the following items: usubjid, pctest, pcorres, pclloq and pcdtc")
   }
   
   df$ID = df$usubjid
