@@ -56,8 +56,16 @@ prepuzzle_is = function(directory=NULL,
   }
   
   df = df
-  if(lower_case){
+  "%!in%" <- function(x, y) !(x %in% y)
+  required = c("usubjid", "trdtc", "trtest", "trorres")
+  if (required %!in% names(df) & lower_case == F) {
+    stop("Have you forgotten to set lower_case = T?")
+  }
+  if (lower_case) {
     names(df) = tolower(names(df))
+  }
+  if (required %!in% names(df)) {
+    stop("You need to provide at least the following items: usubjid, trdtc, trtest and trorres")
   }
   
   df$ID = df$usubjid
